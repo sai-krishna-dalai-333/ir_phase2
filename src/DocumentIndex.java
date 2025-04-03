@@ -1,30 +1,41 @@
-import java.io.*;
-import java.util.*;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DocumentIndex {
-    private Map<Integer, Map<String, Integer>> docIndex;
+    private Map<Integer, Map<String, Integer>> index;
 
     public DocumentIndex() {
-        docIndex = new HashMap<>();
+        index = new HashMap<>();
     }
 
-    public void addDoc(int docID, List<String> terms) {
-        Map<String, Integer> termFrequency = new HashMap<>();
-        for (String term : terms) {
-            termFrequency.put(term, termFrequency.getOrDefault(term, 0) + 1);
-        }
-        docIndex.put(docID, termFrequency);
+    public void addDoc(int documentId, List<String> terms) {
+        Map<String, Integer> frequencyMap = new HashMap<>();
+        terms.forEach(term -> frequencyMap.put(term, frequencyMap.getOrDefault(term, 0) + 1));
+        index.put(documentId, frequencyMap);
     }
 
     public void writeToFile(String filePath) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (Map.Entry<Integer, Map<String, Integer>> entry : docIndex.entrySet()) {
-                writer.write(entry.getKey() + ": ");
-                for (Map.Entry<String, Integer> termEntry : entry.getValue().entrySet()) {
-                    writer.write(termEntry.getKey() + ": " + termEntry.getValue() + "; ");
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
+            index.forEach((documentId, termMap) -> {
+                try {
+                    bufferedWriter.write(documentId + ": ");
+                    termMap.forEach((term, frequency) -> {
+                        try {
+                            bufferedWriter.write(term + ": " + frequency + "; ");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    bufferedWriter.newLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                writer.newLine();
-            }
+            });
         }
     }
 }

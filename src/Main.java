@@ -27,7 +27,7 @@ public class Main {
         int docID = 1;
         for (File file : folder.listFiles()) {
             if (file.isFile()) {
-                System.out.println("Processing file: " + file.getAbsolutePath());
+                // System.out.println("Processing file: " + file.getAbsolutePath());
                 String content = new String(Files.readAllBytes(file.toPath()));
                 List<String> words = parser.parse(parseTextContent(content));
                 documentIndex.addDoc(docID, words);
@@ -45,11 +45,11 @@ public class Main {
 
         // Example search
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter a term to search: ");
+        System.out.print("Enter a word to search: ");
         String term = scanner.nextLine();
         scanner.close();
         Map<Integer, Integer> results = searcher.search(term);
-        System.out.println("Documents containing the term '" + term + "': " + results);
+        System.out.println("Document have the word '" + term + "': " + results);
     }
 
     private static Set<String> loadStopWords(String filePath) throws IOException {

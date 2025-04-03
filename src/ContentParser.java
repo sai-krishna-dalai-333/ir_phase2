@@ -1,25 +1,26 @@
-import java.io.*;
+
 import java.util.*;
 import java.util.regex.*;
 
 public class ContentParser {
-    private Set<String> stopWords;
-    private Porter stemmer;
+    private Set<String> stops;
+    private Porter stems;
 
-    public ContentParser(Set<String> stopWords, Porter stemmer) {
-        this.stopWords = stopWords;
-        this.stemmer = stemmer;
+    public ContentParser(Set<String> stops, Porter stems) {
+        this.stops = stops;
+        this.stems = stems;
     }
 
     public List<String> parse(String content) {
-        List<String> terms = new ArrayList<>();
-        Pattern pattern = Pattern.compile("\\w+");
-        Matcher matcher = pattern.matcher(content.toLowerCase());
+        List<String> terms = new LinkedList<>();
+        Pattern termPattern = Pattern.compile("\\w+");
+        Matcher termMatcher = termPattern.matcher(content.toLowerCase());
 
-        while (matcher.find()) {
-            String term = matcher.group();
-            if (!stopWords.contains(term)) {
-                terms.add(stemmer.stripAffixes(term));
+        while (termMatcher.find()) {
+            String term = termMatcher.group();
+            if (!stops.contains(term)) {
+                String stemmedTerm = stems.stripAffixes(term);
+                terms.add(stemmedTerm);
             }
         }
         return terms;

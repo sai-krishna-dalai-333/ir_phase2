@@ -1,0 +1,21 @@
+Introduction
+This project focuses on developing an Information Retrieval (IR) engine that constructs forward and inverted indices from a set of documents. The IR engine processes these documents to enable indexing and retrieval based on user-specified search terms. The core components of this project include the ForwardIndex, InvertedIndex, TextParser, Retriever, and Main classes.
+
+Design and Implementation
+The ForwardIndex class is responsible for mapping document IDs to word frequencies, with each document assigned a unique ID and storing the words along with their frequencies. The addDocument method adds documents to the forward index, while the saveToFile method saves this index to a file. On the other hand, the InvertedIndex class maps words to document IDs and their frequencies, facilitating efficient document retrieval based on specific terms. The addDocument method adds documents to the inverted index, the saveToFile method saves the index, and the search method retrieves documents and their frequencies for a given term.
+
+The Retriever class leverages the inverted index to fetch documents based on search terms, with the retrieve method returning a map of document IDs and the frequency of the search term in those documents. The Main class coordinates the entire process, from loading stop words and parsing documents to building the indices. It reads documents from a specified folder, processes them, and constructs the forward and inverted indices. The program then prompts the user for a search term and displays the relevant documents and their frequencies.
+
+Steps of Execution
+Initially, stop words are loaded from the stopwordlist.txt file into a set, followed by the initialization of the Porter stemmer and the text parser. The forward and inverted indices are also initialized. Documents are read from the input directory, parsed to extract words, and added to the indices. The indices are then saved to forward_index.txt and inverted_index.txt files. Finally, the program prompts the user for a search term, and the retriever searches the inverted index for the term, displaying the results.
+
+Project Structure
+The project structure includes the src directory for Java source files, the bin directory for compiled .class files, the input directory for input files, and the output directory for output files, including forward_index.txt and inverted_index.txt.
+
+Execution Steps
+To compile the Java files, navigate to the project directory and use the command:
+
+javac -d bin src/*.java
+To run the main class, use the command:
+
+java -cp bin Main

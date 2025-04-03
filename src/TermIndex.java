@@ -1,34 +1,48 @@
-import java.io.*;
-import java.util.*;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TermIndex {
-    private Map<String, Map<Integer, Integer>> termIndex;
+    private Map<String, Map<Integer, Integer>> index;
 
     public TermIndex() {
-        termIndex = new HashMap<>();
+        index = new HashMap<>();
     }
 
-    public void addDoc(int docID, List<String> terms) {
-        for (String term : terms) {
-            termIndex.putIfAbsent(term, new HashMap<>());
-            Map<Integer, Integer> docFrequency = termIndex.get(term);
-            docFrequency.put(docID, docFrequency.getOrDefault(docID, 0) + 1);
-        }
+    public void addDoc(int documentId, List<String> terms) {
+        terms.forEach(term -> {
+            index.computeIfAbsent(term, k -> new HashMap<>());
+            Map<Integer, Integer> docFreqMap = index.get(term);
+            docFreqMap.merge(documentId, 1, Integer::sum);
+        });
     }
 
     public void writeToFile(String filePath) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (Map.Entry<String, Map<Integer, Integer>> entry : termIndex.entrySet()) {
-                writer.write(entry.getKey() + ": ");
-                for (Map.Entry<Integer, Integer> docEntry : entry.getValue().entrySet()) {
-                    writer.write(docEntry.getKey() + ": " + docEntry.getValue() + "; ");
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
+            index.forEach((term, docMap) -> {
+                try {
+                    bufferedWriter.write(term + ": ");
+                    docMap.forEach((docId, frequency) -> {
+                        try {
+                            bufferedWriter.write(docId + ": " + frequency + "; ");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    bufferedWriter.newLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                writer.newLine();
-            }
+            });
         }
     }
 
     public Map<Integer, Integer> find(String term) {
-        return termIndex.getOrDefault(term, Collections.emptyMap());
+        return index.getOrDefault(term, Collections.emptyMap());
     }
 }
